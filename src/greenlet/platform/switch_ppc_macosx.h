@@ -43,7 +43,7 @@
        "r21", "r22", "r23", "r24", "r25", "r26", "r27", "r28", "r29", \
        "cr2", "cr3", "cr4"
 
-static constexpr int
+static int
 slp_switch(void)
 {
     int err;

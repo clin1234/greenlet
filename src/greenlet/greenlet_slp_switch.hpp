@@ -59,7 +59,7 @@ do {                                                    \
     stsizediff = switching_thread_state->stack_start() - (char*)stackref; \
 } while (0)
 
-static inline constexpr void SLP_RESTORE_STATE()
+static inline void SLP_RESTORE_STATE()
 {
     slp_restore_state_trampoline();
 }

@@ -117,7 +117,7 @@ https://bugs.python.org/issue39573 */
 
 // bpo-43760 added PyThreadState_EnterTracing() to Python 3.11.0a2
 #if PY_VERSION_HEX < 0x030B00A2 && !defined(PYPY_VERSION)
-static constexpr inline constexpr void PyThreadState_EnterTracing(PyThreadState *tstate)
+static inline void PyThreadState_EnterTracing(PyThreadState *tstate)
 {
     tstate->tracing++;
 #if PY_VERSION_HEX >= 0x030A00A1
@@ -130,7 +130,7 @@ static constexpr inline constexpr void PyThreadState_EnterTracing(PyThreadState 
 
 // bpo-43760 added PyThreadState_LeaveTracing() to Python 3.11.0a2
 #if PY_VERSION_HEX < 0x030B00A2 && !defined(PYPY_VERSION)
-static constexpr inline constexpr void PyThreadState_LeaveTracing(PyThreadState *tstate)
+static inline void PyThreadState_LeaveTracing(PyThreadState *tstate)
 {
     tstate->tracing--;
     int use_tracing = (tstate->c_tracefunc != NULL

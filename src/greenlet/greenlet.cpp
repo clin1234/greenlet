@@ -194,7 +194,7 @@ GREENLET_NOINLINE(slp_restore_state_trampoline)()
 
 #include "PyModule.cpp"
 
-constexpr static PyObject*
+static PyObject*
 greenlet_internal_mod_init() noexcept
 {
     static void* _PyGreenlet_API[PyGreenlet_API_pointers];

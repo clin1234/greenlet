@@ -17,19 +17,19 @@ static void (*p_test_exception_throw_nonstd)(int depth);
 static void (*p_test_exception_throw_std)();
 static PyObject* (*p_test_exception_switch_recurse)(int depth, int left);
 
-static constexpr void
+static void
 test_exception_throw_nonstd(int depth)
 {
     throw exception_t(depth);
 }
 
-static constexpr void
+static void
 test_exception_throw_std()
 {
     throw std::runtime_error("Thrown from an extension.");
 }
 
-constexpr static PyObject*
+static PyObject*
 test_exception_switch_recurse(int depth, int left)
 {
     if (left > 0) {
@@ -70,7 +70,7 @@ test_exception_switch_recurse(int depth, int left)
  * - throws an exception that (expected to be caught in the same function)
  * - verifies depth matches (exceptions shouldn't be caught in other greenlets)
  */
-constexpr static PyObject*
+static PyObject*
 test_exception_switch(PyObject* UNUSED(self), PyObject* args)
 {
     int depth;
@@ -80,7 +80,7 @@ test_exception_switch(PyObject* UNUSED(self), PyObject* args)
 }
 
 
-constexpr static PyObject*
+static PyObject*
 py_test_exception_throw_nonstd(PyObject* self, PyObject* args)
 {
     if (!PyArg_ParseTuple(args, ""))
@@ -90,7 +90,7 @@ py_test_exception_throw_nonstd(PyObject* self, PyObject* args)
     return NULL;
 }
 
-constexpr static PyObject*
+static PyObject*
 py_test_exception_throw_std(PyObject* self, PyObject* args)
 {
     if (!PyArg_ParseTuple(args, ""))
@@ -100,7 +100,7 @@ py_test_exception_throw_std(PyObject* self, PyObject* args)
     return NULL;
 }
 
-constexpr static PyObject*
+static PyObject*
 py_test_call(PyObject* self, PyObject* arg)
 {
     PyObject* noargs = PyTuple_New(0);
@@ -120,7 +120,7 @@ py_test_call(PyObject* self, PyObject* arg)
  * exceptions thrown in one greenlet do not propagate to other greenlet nor
  * segfault the process.
  */
-constexpr static PyObject*
+static PyObject*
 test_exception_switch_and_do_in_g2(PyObject* self, PyObject* args)
 {
     PyObject* g2func = NULL;

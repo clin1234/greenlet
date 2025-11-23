@@ -13,7 +13,7 @@
  * This file is included from ``internal/pycore_interpframe.h``, which
  * we need for the ``_PyFrame_IsIncomplete`` API.
  *
- * Unfortunately, that API is a ``static constexpr inline`` function, as are a
+ * Unfortunately, that API is a ``static inline`` function, as are a
  * bunch of the functions it calls. The only solution seems to be to
  * copy those definitions and the supporting inline functions here.
  *
@@ -44,17 +44,17 @@ extern "C" {
 #endif
 
 
-static constexpr _PyStackRef PyStackRef_NULL = { .bits = Py_TAG_DEFERRED};
+static _PyStackRef PyStackRef_NULL = { .bits = Py_TAG_DEFERRED};
 #define PyStackRef_IsNull(stackref) ((stackref).bits == PyStackRef_NULL.bits)
 
-static constexpr inline PyObject *
+static inline PyObject *
 PyStackRef_AsPyObjectBorrow(_PyStackRef stackref)
 {
     PyObject *cleared = ((PyObject *)((stackref).bits & (~Py_TAG_BITS)));
     return cleared;
 }
 
-static constexpr inline PyCodeObject *_PyFrame_GetCode(_PyInterpreterFrame *f) {
+static inline PyCodeObject *_PyFrame_GetCode(_PyInterpreterFrame *f) {
     assert(!PyStackRef_IsNull(f->f_executable));
     PyObject *executable = PyStackRef_AsPyObjectBorrow(f->f_executable);
     assert(PyCode_Check(executable));
@@ -62,7 +62,7 @@ static constexpr inline PyCodeObject *_PyFrame_GetCode(_PyInterpreterFrame *f) {
 }
 
 
-static constexpr inline _Py_CODEUNIT *
+static inline _Py_CODEUNIT *
 _PyFrame_GetBytecode(_PyInterpreterFrame *f)
 {
 #ifdef Py_GIL_DISABLED
@@ -75,7 +75,7 @@ _PyFrame_GetBytecode(_PyInterpreterFrame *f)
 #endif
 }
 
-static constexpr inline bool constexpr //_Py_NO_SANITIZE_THREAD
+static inline bool constexpr //_Py_NO_SANITIZE_THREAD
 _PyFrame_IsIncomplete(_PyInterpreterFrame *frame)
 {
     if (frame->owner >= FRAME_OWNED_BY_INTERPRETER) {

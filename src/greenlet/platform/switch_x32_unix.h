@@ -15,7 +15,7 @@
 #define REGS_TO_SAVE "r12", "r13", "r14", "r15"
 
 
-static constexpr int
+static int
 slp_switch(void)
 {
     void* ebp;

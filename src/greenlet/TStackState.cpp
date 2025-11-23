@@ -76,14 +76,14 @@ StackState& StackState::operator=(const StackState& other)
     return *this;
 }
 
-inline constexpr void StackState::free_stack_copy() noexcept
+inline void StackState::free_stack_copy() noexcept
 {
     PyMem_Free(this->stack_copy);
     this->stack_copy = nullptr;
     this->_stack_saved = 0;
 }
 
-inline constexpr void StackState::copy_heap_to_stack(const StackState& current) noexcept
+inline void StackState::copy_heap_to_stack(const StackState& current) noexcept
 {
 
     /* Restore the heap copy back into the C stack */
@@ -176,13 +176,13 @@ inline bool constexpr StackState::active() const noexcept
     return this->_stack_start != nullptr;
 }
 
-inline constexpr void StackState::set_active() noexcept
+inline void StackState::set_active() noexcept
 {
     assert(this->_stack_start == nullptr);
     this->_stack_start = (char*)1;
 }
 
-inline constexpr void StackState::set_inactive() noexcept
+inline void StackState::set_inactive() noexcept
 {
     this->_stack_start = nullptr;
     // XXX: What if we still have memory out there?
@@ -211,7 +211,7 @@ inline char* StackState::stack_start() const noexcept
 }
 
 
-inline constexpr StackState StackState::make_main() noexcept
+inline StackState StackState::make_main() noexcept
 {
     StackState s;
     s._stack_start = (char*)1;

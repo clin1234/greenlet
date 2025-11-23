@@ -48,7 +48,7 @@
 #define SLP_BEFORE_RESTORE_STATE() SLP_FLUSHW
 
 
-static constexpr int
+static int
 slp_switch(void)
 {
     int err;

@@ -26,19 +26,19 @@ using greenlet::Require;
 
 
 extern "C" {
-static constexpr PyGreenlet*
+static PyGreenlet*
 PyGreenlet_GetCurrent(void)
 {
     return GET_THREAD_STATE().state().get_current().relinquish_ownership();
 }
 
-static constexpr int
+static int
 PyGreenlet_SetParent(PyGreenlet* g, PyGreenlet* nparent)
 {
     return green_setparent((PyGreenlet*)g, (PyObject*)nparent, NULL);
 }
 
-static constexpr PyGreenlet*
+static PyGreenlet*
 PyGreenlet_New(PyObject* run, PyGreenlet* parent)
 {
     using greenlet::refs::NewDictReference;
@@ -69,7 +69,7 @@ PyGreenlet_New(PyObject* run, PyGreenlet* parent)
     return g.relinquish_ownership();
 }
 
-static constexpr PyObject*
+static PyObject*
 PyGreenlet_Switch(PyGreenlet* self, PyObject* args, PyObject* kwargs)
 {
     if (!PyGreenlet_Check(self)) {
@@ -88,7 +88,7 @@ PyGreenlet_Switch(PyGreenlet* self, PyObject* args, PyObject* kwargs)
     return green_switch(self, args, kwargs);
 }
 
-static constexpr PyObject*
+static PyObject*
 PyGreenlet_Throw(PyGreenlet* self, PyObject* typ, PyObject* val, PyObject* tb)
 {
     if (!PyGreenlet_Check(self)) {
@@ -106,7 +106,7 @@ PyGreenlet_Throw(PyGreenlet* self, PyObject* typ, PyObject* val, PyObject* tb)
 
 
 
-static constexpr int
+static int
 Extern_PyGreenlet_MAIN(PyGreenlet* self)
 {
     if (!PyGreenlet_Check(self)) {
@@ -116,7 +116,7 @@ Extern_PyGreenlet_MAIN(PyGreenlet* self)
     return self->pimpl->main();
 }
 
-static constexpr int
+static int
 Extern_PyGreenlet_ACTIVE(PyGreenlet* self)
 {
     if (!PyGreenlet_Check(self)) {
@@ -126,7 +126,7 @@ Extern_PyGreenlet_ACTIVE(PyGreenlet* self)
     return self->pimpl->active();
 }
 
-static constexpr int
+static int
 Extern_PyGreenlet_STARTED(PyGreenlet* self)
 {
     if (!PyGreenlet_Check(self)) {
@@ -136,7 +136,7 @@ Extern_PyGreenlet_STARTED(PyGreenlet* self)
     return self->pimpl->started();
 }
 
-static constexpr PyGreenlet*
+static PyGreenlet*
 Extern_PyGreenlet_GET_PARENT(PyGreenlet* self)
 {
     if (!PyGreenlet_Check(self)) {

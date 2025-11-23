@@ -31,7 +31,7 @@
 #define REGS_TO_SAVE REGS_TO_SAVE_GENERAL, "d8", "d9", "d10", "d11", \
                                            "d12", "d13", "d14", "d15"
 
-static constexpr int
+static int
 #ifdef __GNUC__
 __attribute__((optimize("no-omit-frame-pointer")))
 #endif

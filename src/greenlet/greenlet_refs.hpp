@@ -52,7 +52,7 @@ namespace greenlet
 
             PyTypeObject* typ = Py_TYPE(p);
             // fast, common path. (PyObject_TypeCheck is a macro or
-            // static constexpr inline function, and it also does a
+            // static inline function, and it also does a
             // direct comparison of the type pointers, but its fast
             // path only handles one type)
             if (typ == &PyGreenlet_Type) {
@@ -204,7 +204,7 @@ namespace greenlet {
             return this->p;
         }
 
-        constexpr bool is_None() const noexcept
+        bool is_None() const noexcept
         {
             return this->p == Py_None;
         }
@@ -221,7 +221,7 @@ namespace greenlet {
             return this->p != nullptr;
         }
 
-        constexpr bool operator!() const noexcept
+        bool operator!() const noexcept
         {
             return this->p == nullptr;
         }
@@ -256,7 +256,7 @@ namespace greenlet {
             TC(t);
             p = reinterpret_cast<T*>(t);
         }
-        constexpr void* _get_raw_pointer() const
+        void* _get_raw_pointer() const
         {
             return p;
         }
@@ -387,7 +387,7 @@ namespace greenlet {
             return this->operator=(reinterpret_cast<T*>(op));
         }
 
-        inline constexpr void steal(T* other)
+        inline void steal(T* other)
         {
             assert(this->p == nullptr);
             TC(other);
@@ -424,7 +424,7 @@ namespace greenlet {
         }
     };
 
-    static constexpr inline
+    static inline
     void operator<<=(PyObject*& target, OwnedObject& o)
     {
         target = o.relinquish_ownership();
@@ -798,7 +798,7 @@ namespace greenlet {
         return OwnedObject::consuming(PyObject_Call(this->p, args.borrow(), kwargs.borrow()));
     }
 
-    inline constexpr void
+    inline void
     ListChecker(void * p)
     {
         if (!p) {
@@ -854,7 +854,7 @@ namespace greenlet {
             return PyList_GET_ITEM(p, index);
         }
 
-        inline constexpr void clear()
+        inline void clear()
         {
             PyList_SetSlice(p, 0, PyList_GET_SIZE(p), NULL);
         }
@@ -931,7 +931,7 @@ namespace greenlet {
         // To allow declaring these and passing them to
         // PyErr_Fetch we implement the empty constructor,
         // and the address operator.
-        constexpr PyErrFetchParam() : PyObjectPointer<>(nullptr)
+        PyErrFetchParam() : PyObjectPointer<>(nullptr)
         {
         }
 
@@ -1010,7 +1010,7 @@ namespace greenlet {
             this->normalize();
         }
 
-        constexpr PyErrPieces() :
+        PyErrPieces() :
             restored(0)
         {
             // PyErr_Fetch transfers ownership to us, so
@@ -1023,7 +1023,7 @@ namespace greenlet {
             traceback.steal(tb.relinquish_ownership());
         }
 
-        constexpr void PyErrRestore()
+        void PyErrRestore()
         {
             // can only do this once
             assert(!this->restored);
@@ -1036,7 +1036,7 @@ namespace greenlet {
         }
 
     private:
-        constexpr void normalize()
+        void normalize()
         {
             // First, check the traceback argument, replacing None,
             // with NULL
@@ -1103,7 +1103,7 @@ namespace greenlet {
     private:
         G_NO_COPIES_OF_CLS(PyArgParseParam);
     public:
-        constexpr explicit PyArgParseParam(PyObject* p=nullptr) : BorrowedObject(p)
+        explicit PyArgParseParam(PyObject* p=nullptr) : BorrowedObject(p)
         {
         }
 

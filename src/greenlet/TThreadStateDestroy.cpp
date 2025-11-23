@@ -29,7 +29,7 @@ struct ThreadState_DestroyNoGIL
     /**
        This function uses the same lock that the PendingCallback does
      */
-    static constexpr void
+    static void
     MarkGreenletDeadAndQueueCleanup(ThreadState* const state)
     {
 #if GREENLET_BROKEN_THREAD_LOCAL_CLEANUP_JUST_LEAK
@@ -84,7 +84,7 @@ private:
         return false;
     }
 
-    static constexpr void
+    static void
     AddToCleanupQueue(ThreadState* const state)
     {
         assert(state && state->has_main_greenlet());
@@ -125,7 +125,7 @@ private:
         }
     }
 
-    static constexpr int
+    static int
     PendingCallback_DestroyQueueWithGIL(void* UNUSED(arg))
     {
         // We're holding the GIL here, so no Python code should be able to
@@ -149,7 +149,7 @@ private:
         return 0;
     }
 
-    static constexpr void
+    static void
     DestroyOneWithGIL(const ThreadState* const state)
     {
         // Holding the GIL.
@@ -168,7 +168,7 @@ private:
     }
 
 
-    static constexpr int AddPendingCall(int (*func)(void*), void* arg)
+    static int AddPendingCall(int (*func)(void*), void* arg)
     {
         // If the interpreter is in the middle of finalizing, we can't add a
         // pending call. Trying to do so will end up in a SIGSEGV, as

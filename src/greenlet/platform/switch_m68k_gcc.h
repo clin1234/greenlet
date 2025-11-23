@@ -13,7 +13,7 @@
 #define REGS_TO_SAVE "%d2", "%d3", "%d4", "%d5", "%d6", "%d7", \
 		     "%a2", "%a3", "%a4"
 
-static constexpr int
+static int
 slp_switch(void)
 {
   int err;

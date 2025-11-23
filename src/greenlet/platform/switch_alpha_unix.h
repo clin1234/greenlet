@@ -6,7 +6,7 @@
 #define REGS_TO_SAVE "$9", "$10", "$11", "$12", "$13", "$14", "$15", \
 		     "$f2", "$f3", "$f4", "$f5", "$f6", "$f7", "$f8", "$f9"
 
-static constexpr int
+static int
 slp_switch(void)
 {
   int ret;

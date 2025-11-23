@@ -88,7 +88,7 @@ PythonState::PythonState()
 }
 
 
-inline constexpr void PythonState::may_switch_away() noexcept
+inline void PythonState::may_switch_away() noexcept
 {
 #if GREENLET_PY311
     // PyThreadState_GetFrame is probably going to have to allocate a
@@ -115,7 +115,7 @@ inline constexpr void PythonState::may_switch_away() noexcept
 #endif
 }
 
-constexpr void PythonState::operator<<(const PyThreadState *const tstate) noexcept
+void PythonState::operator<<(const PyThreadState *const tstate) noexcept
 {
     this->_context.steal(tstate->context);
 #if GREENLET_USE_CFRAME
@@ -194,7 +194,7 @@ void PythonState::unexpose_frames()
 {}
 #endif
 
-constexpr void PythonState::operator>>(PyThreadState *const tstate) noexcept
+void PythonState::operator>>(PyThreadState *const tstate) noexcept
 {
     tstate->context = this->_context.relinquish_ownership();
     /* Incrementing this value invalidates the contextvars cache,
@@ -249,7 +249,7 @@ constexpr void PythonState::operator>>(PyThreadState *const tstate) noexcept
 #endif // GREENLET_PY311
 }
 
-inline constexpr void PythonState::will_switch_from(PyThreadState *const origin_tstate) noexcept
+inline void PythonState::will_switch_from(PyThreadState *const origin_tstate) noexcept
 {
 #if GREENLET_USE_CFRAME && !GREENLET_PY312
     // The weird thing is, we don't actually save this for an

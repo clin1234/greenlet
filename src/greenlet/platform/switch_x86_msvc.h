@@ -129,7 +129,7 @@ typedef struct _GExceptionRegistration {
     void* handler_f;
 } GExceptionRegistration;
 
-static constexpr void
+static void
 slp_set_exception_state(const void *const seh_state)
 {
     // Because the stack from from which we do this is ALSO a handler, and
@@ -167,7 +167,7 @@ x86_slp_get_third_oldest_handler()
 }
 
 
-static constexpr void*
+static void*
 slp_get_exception_state()
 {
     // XXX: There appear to be three SEH handlers on the stack already at the
@@ -183,7 +183,7 @@ slp_get_exception_state()
     return x86_slp_get_third_oldest_handler();
 }
 
-static constexpr int
+static int
 slp_switch(void)
 {
     /* MASM syntax is typically reversed from other assemblers.
@@ -228,14 +228,14 @@ slp_switch(void)
 
 #define CANNOT_READ_MEM(p, bytes) IsBadReadPtr(p, bytes)
 
-static constexpr int IS_ON_STACK(void*p)
+static int IS_ON_STACK(void*p)
 {
     int stackref;
     int stackbase = ((int)&stackref) & 0xfffff000;
     return (int)p >= stackbase && (int)p < stackbase + 0x00100000;
 }
 
-static constexpr void
+static void
 x86_slp_show_seh_chain()
 {
     GExceptionRegistration* seh_state = (GExceptionRegistration*)__readfsdword(FIELD_OFFSET(NT_TIB, ExceptionList));

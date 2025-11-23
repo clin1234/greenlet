@@ -92,7 +92,7 @@ extern PyTypeObject PyGreenlet_Type;
 /**
   * Forward declarations needed in multiple files.
   */
-constexpr static PyObject* green_switch(PyGreenlet* self, PyObject* args, PyObject* kwargs);
+static PyObject* green_switch(PyGreenlet* self, PyObject* args, PyObject* kwargs);
 
 
 #ifdef __clang__

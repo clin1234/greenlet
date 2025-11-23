@@ -18,7 +18,7 @@ namespace greenlet {
     public:
 
         // CAUTION: In debug builds, may run arbitrary Python code.
-        static constexpr PyErrOccurred
+        static PyErrOccurred
         from_current()
         {
             assert(PyErr_Occurred());
@@ -145,7 +145,7 @@ namespace greenlet {
         }
     };
 
-    static constexpr inline PyObject*
+    static inline PyObject*
     Require(PyObject* p, const std::string& msg="")
     {
         if (!p) {
@@ -154,7 +154,7 @@ namespace greenlet {
         return p;
     };
 
-    static constexpr inline void
+    static inline void
     Require(const int retval)
     {
         if (retval < 0) {

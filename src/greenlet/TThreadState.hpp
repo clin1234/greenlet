@@ -197,7 +197,7 @@ public:
 #endif
     }
 
-    inline bool constexpr has_main_greenlet() const noexcept
+    inline bool has_main_greenlet() const noexcept
     {
         return bool(this->main_greenlet);
     }
@@ -263,7 +263,7 @@ public:
     }
 
     template<typename T, refs::TypeChecker TC>
-    inline bool constexpr is_current(const refs::PyObjectPointer<T, TC>& obj) const
+    inline bool is_current(const refs::PyObjectPointer<T, TC>& obj) const
     {
         return this->current_greenlet.borrow_o() == obj.borrow_o();
     }

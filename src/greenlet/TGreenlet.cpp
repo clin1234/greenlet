@@ -79,7 +79,7 @@ Greenlet::slp_restore_state() noexcept
 }
 
 
-inline int constexpr
+inline int
 Greenlet::slp_save_state(char *const stackref) noexcept
 {
     // XXX: This used to happen in the middle, before saving, but
@@ -606,7 +606,7 @@ Greenlet::tp_clear()
     return 0;
 }
 
-bool constexpr Greenlet::is_currently_running_in_some_thread() const
+bool Greenlet::is_currently_running_in_some_thread() const
 {
     return this->stack_state.active() && !this->python_state.top_frame();
 }

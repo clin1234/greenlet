@@ -75,7 +75,7 @@ _PyFrame_GetBytecode(_PyInterpreterFrame *f)
 #endif
 }
 
-static inline bool constexpr //_Py_NO_SANITIZE_THREAD
+static inline bool //_Py_NO_SANITIZE_THREAD
 _PyFrame_IsIncomplete(_PyInterpreterFrame *frame)
 {
     if (frame->owner >= FRAME_OWNED_BY_INTERPRETER) {

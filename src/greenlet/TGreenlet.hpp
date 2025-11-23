@@ -189,7 +189,7 @@ namespace greenlet
         char* stack_copy;
         intptr_t _stack_saved;
         StackState* stack_prev;
-        inline int constexpr copy_stack_to_heap_up_to(const char* const stop) noexcept;
+        inline int copy_stack_to_heap_up_to(const char* const stop) noexcept;
         inline void free_stack_copy() noexcept;
 
     public:
@@ -206,13 +206,13 @@ namespace greenlet
         StackState(const StackState& other);
         StackState& operator=(const StackState& other);
         inline void copy_heap_to_stack(const StackState& current) noexcept;
-        inline int constexpr copy_stack_to_heap(char* const stackref, const StackState& current) noexcept;
-        inline bool constexpr started() const noexcept;
-        inline bool constexpr main() const noexcept;
-        inline bool constexpr active() const noexcept;
+        inline int copy_stack_to_heap(char* const stackref, const StackState& current) noexcept;
+        inline bool started() const noexcept;
+        inline bool main() const noexcept;
+        inline bool active() const noexcept;
         inline void set_active() noexcept;
         inline void set_inactive() noexcept;
-        inline constexpr intptr_t stack_saved() const noexcept;
+        inline intptr_t stack_saved() const noexcept;
         inline char* stack_start() const noexcept;
         static inline StackState make_main() noexcept;
 #ifdef GREENLET_USE_STDIO
@@ -377,7 +377,7 @@ namespace greenlet
 
         virtual refs::BorrowedMainGreenlet main_greenlet() const = 0;
 
-        inline constexpr intptr_t stack_saved() const noexcept
+        inline intptr_t stack_saved() const noexcept
         {
             return this->stack_state.stack_saved();
         }
@@ -435,20 +435,20 @@ namespace greenlet
 
         // TODO: Figure out how to make these non-public.
         inline void slp_restore_state() noexcept;
-        inline int constexpr slp_save_state(char *const stackref) noexcept;
+        inline int slp_save_state(char *const stackref) noexcept;
 
-        inline bool constexpr is_currently_running_in_some_thread() const;
+        inline bool is_currently_running_in_some_thread() const;
         virtual bool belongs_to_thread(const ThreadState* state) const;
 
-        inline bool constexpr started() const
+        inline bool started() const
         {
             return this->stack_state.started();
         }
-        inline bool constexpr active() const
+        inline bool active() const
         {
             return this->stack_state.active();
         }
-        inline bool constexpr main() const
+        inline bool main() const
         {
             return this->stack_state.main();
         }

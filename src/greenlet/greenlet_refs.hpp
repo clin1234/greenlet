@@ -703,7 +703,7 @@ namespace greenlet {
                            : nullptr)
         {}
 
-        inline bool constexpr PyExceptionMatches() const
+        inline bool PyExceptionMatches() const
         {
             return PyErr_ExceptionMatches(this->p) > 0;
         }
@@ -839,7 +839,7 @@ namespace greenlet {
             return *this;
         }
 
-        inline bool constexpr empty() const
+        inline bool empty() const
         {
             return PyList_GET_SIZE(p) == 0;
         }
@@ -935,7 +935,7 @@ namespace greenlet {
         {
         }
 
-        constexpr inline PyObject** operator&()
+        inline PyObject** operator&()
         {
             return &this->p;
         }
@@ -943,7 +943,7 @@ namespace greenlet {
         // This allows us to pass one directly without the &,
         // BUT it has higher precedence than the bool operator
         // if it's not explicit.
-        constexpr operator PyObject**()
+        operator PyObject**()
         {
             return &this->p;
         }
@@ -951,7 +951,7 @@ namespace greenlet {
         // We don't want to be able to pass these to Py_DECREF and
         // such so we don't have the implicit PyObject* conversion.
 
-        constexpr inline PyObject* relinquish_ownership()
+        inline PyObject* relinquish_ownership()
         {
             PyObject* result = this->p;
             this->p = nullptr;
@@ -970,12 +970,12 @@ namespace greenlet {
 
     public:
         // Unlike OwnedObject, this increments the refcount.
-        constexpr OwnedErrPiece(PyObject* p=nullptr) : OwnedObject(p)
+        OwnedErrPiece(PyObject* p=nullptr) : OwnedObject(p)
         {
             this->acquire();
         }
 
-        constexpr inline PyObject** operator&()
+        inline PyObject** operator&()
         {
             return &this->p;
         }
@@ -985,7 +985,7 @@ namespace greenlet {
             return this->p;
         }
 
-        constexpr operator PyTypeObject*() const
+        operator PyTypeObject*() const
         {
             return reinterpret_cast<PyTypeObject*>(this->p);
         }
@@ -1001,7 +1001,7 @@ namespace greenlet {
     public:
         // Takes new references; if we're destroyed before
         // restoring the error, we drop the references.
-        constexpr PyErrPieces(PyObject* t, PyObject* v, PyObject* tb) :
+        PyErrPieces(PyObject* t, PyObject* v, PyObject* tb) :
             type(t),
             instance(v),
             traceback(tb),
@@ -1107,7 +1107,7 @@ namespace greenlet {
         {
         }
 
-        constexpr inline PyObject** operator&()
+        inline PyObject** operator&()
         {
             return &this->p;
         }

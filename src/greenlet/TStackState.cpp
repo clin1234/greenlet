@@ -103,7 +103,7 @@ inline void StackState::copy_heap_to_stack(const StackState& current) noexcept
     // cerr << "\tFinished with: " << *this << endl;
 }
 
-inline int constexpr StackState::copy_stack_to_heap_up_to(const char* const stop) noexcept
+inline int StackState::copy_stack_to_heap_up_to(const char* const stop) noexcept
 {
     /* Save more of g's stack into the heap -- at least up to 'stop'
        g->stack_stop |________|
@@ -131,7 +131,7 @@ inline int constexpr StackState::copy_stack_to_heap_up_to(const char* const stop
     return 0;
 }
 
-inline int constexpr StackState::copy_stack_to_heap(char* const stackref,
+inline int StackState::copy_stack_to_heap(char* const stackref,
                                           const StackState& current) noexcept
 {
     /* must free all the C stack up to target_stop */
@@ -161,17 +161,17 @@ inline int constexpr StackState::copy_stack_to_heap(char* const stackref,
     return 0;
 }
 
-inline bool constexpr StackState::started() const noexcept
+inline bool StackState::started() const noexcept
 {
     return this->stack_stop != nullptr;
 }
 
-inline bool constexpr StackState::main() const noexcept
+inline bool StackState::main() const noexcept
 {
     return this->stack_stop == (char*)-1;
 }
 
-inline bool constexpr StackState::active() const noexcept
+inline bool StackState::active() const noexcept
 {
     return this->_stack_start != nullptr;
 }
@@ -200,7 +200,7 @@ inline void StackState::set_inactive() noexcept
     }
 }
 
-inline constexpr intptr_t StackState::stack_saved() const noexcept
+inline intptr_t StackState::stack_saved() const noexcept
 {
     return this->_stack_saved;
 }

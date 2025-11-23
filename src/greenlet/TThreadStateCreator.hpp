@@ -24,12 +24,12 @@ private:
     ThreadState* _state;
     G_NO_COPIES_OF_CLS(ThreadStateCreator);
 
-    inline bool constexpr has_initialized_state() const noexcept
+    inline bool has_initialized_state() const noexcept
     {
         return this->_state != (ThreadState*)1;
     }
 
-    inline bool constexpr has_state() const noexcept
+    inline bool has_state() const noexcept
     {
         return this->has_initialized_state() && this->_state != nullptr;
     }
@@ -85,7 +85,7 @@ public:
         return &this->state();
     }
 
-    inline int constexpr tp_traverse(visitproc visit, void* arg)
+    inline int tp_traverse(visitproc visit, void* arg)
     {
         if (this->has_state()) {
             return this->_state->tp_traverse(visit, arg);

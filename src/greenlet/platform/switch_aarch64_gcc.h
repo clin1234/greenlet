@@ -63,7 +63,7 @@
  Whenever a W register is written, the top half of the X register is zeroed.
  */
 
-static int
+static constexpr int
 slp_switch(void)
 {
 	int err;

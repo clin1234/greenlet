@@ -48,7 +48,6 @@ static int GREENLET_NOINLINE(slp_save_state_trampoline)(char* stackref);
 static void GREENLET_NOINLINE(slp_restore_state_trampoline)();
 }
 
-
 #define SLP_SAVE_STATE(stackref, stsizediff) \
 do {                                                    \
     assert(switching_thread_state);  \
@@ -60,7 +59,10 @@ do {                                                    \
     stsizediff = switching_thread_state->stack_start() - (char*)stackref; \
 } while (0)
 
-#define SLP_RESTORE_STATE() slp_restore_state_trampoline()
+static inline constexpr void SLP_RESTORE_STATE()
+{
+    slp_restore_state_trampoline();
+}
 
 #define SLP_EVAL
 extern "C" {

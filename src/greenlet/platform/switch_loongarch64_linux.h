@@ -7,7 +7,7 @@
                     "s6", "s7", "s8", "fp", \
                     "f24", "f25", "f26", "f27", "f28", "f29", "f30", "f31"
 
-static int
+static constexpr int
 slp_switch(void)
 {
     int ret;

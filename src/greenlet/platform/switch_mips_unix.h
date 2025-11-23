@@ -16,7 +16,7 @@
 
 #define REGS_TO_SAVE "$16", "$17", "$18", "$19", "$20", "$21", "$22", \
        "$23", "$30"
-static int
+static constexpr int
 slp_switch(void)
 {
     int err;

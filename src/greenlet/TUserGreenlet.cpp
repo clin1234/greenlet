@@ -22,13 +22,13 @@ namespace greenlet {
 using greenlet::refs::BorrowedMainGreenlet;
 greenlet::PythonAllocator<UserGreenlet> UserGreenlet::allocator;
 
-void* UserGreenlet::operator new(size_t UNUSED(count))
+constexpr void* UserGreenlet::operator new(size_t UNUSED(count))
 {
     return allocator.allocate(1);
 }
 
 
-void UserGreenlet::operator delete(void* ptr)
+constexpr void UserGreenlet::operator delete(void* ptr)
 {
     return allocator.deallocate(static_cast<UserGreenlet*>(ptr),
                                 1);
@@ -50,7 +50,7 @@ UserGreenlet::~UserGreenlet()
 }
 
 
-const BorrowedMainGreenlet
+constexpr BorrowedMainGreenlet
 UserGreenlet::main_greenlet() const
 {
     return this->_main_greenlet;
@@ -108,7 +108,7 @@ UserGreenlet::thread_state() const noexcept
 }
 
 
-bool
+constexpr bool
 UserGreenlet::was_running_in_dead_thread() const noexcept
 {
     return this->_main_greenlet && !this->thread_state();
@@ -375,7 +375,7 @@ UserGreenlet::g_initialstub(void* mark)
 }
 
 
-void
+constexpr void
 UserGreenlet::inner_bootstrap(PyGreenlet* origin_greenlet, PyObject* run)
 {
     // The arguments here would be another great place for move.
@@ -563,7 +563,7 @@ UserGreenlet::inner_bootstrap(PyGreenlet* origin_greenlet, PyObject* run)
     std::abort();
 }
 
-void
+constexpr void
 UserGreenlet::run(const BorrowedObject nrun)
 {
     if (this->started()) {
@@ -574,13 +574,13 @@ UserGreenlet::run(const BorrowedObject nrun)
     this->_run_callable = nrun;
 }
 
-const OwnedGreenlet
+constexpr OwnedGreenlet
 UserGreenlet::parent() const
 {
     return this->_parent;
 }
 
-void
+constexpr void
 UserGreenlet::parent(const BorrowedObject raw_new_parent)
 {
     if (!raw_new_parent) {
@@ -610,21 +610,21 @@ UserGreenlet::parent(const BorrowedObject raw_new_parent)
     this->_parent = new_parent;
 }
 
-void
+constexpr void
 UserGreenlet::murder_in_place()
 {
     this->_main_greenlet.CLEAR();
     Greenlet::murder_in_place();
 }
 
-bool
+constexpr bool
 UserGreenlet::belongs_to_thread(const ThreadState* thread_state) const
 {
     return Greenlet::belongs_to_thread(thread_state) && this->_main_greenlet == thread_state->borrow_main_greenlet();
 }
 
 
-int
+constexpr int
 UserGreenlet::tp_traverse(visitproc visit, void* arg)
 {
     Py_VISIT(this->_parent.borrow_o());
@@ -634,7 +634,7 @@ UserGreenlet::tp_traverse(visitproc visit, void* arg)
     return Greenlet::tp_traverse(visit, arg);
 }
 
-int
+constexpr int
 UserGreenlet::tp_clear()
 {
     Greenlet::tp_clear();

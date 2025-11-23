@@ -71,7 +71,7 @@
        ALTIVEC_REGS \
        "cr2", "cr3", "cr4"
 
-static int
+static constexpr int
 slp_switch(void)
 {
     int err;

@@ -151,18 +151,18 @@ private:
 
 
 public:
-    static void* operator new(size_t UNUSED(count))
+    static constexpr void* operator new(size_t UNUSED(count))
     {
         return ThreadState::allocator.allocate(1);
     }
 
-    static void operator delete(void* ptr)
+    static constexpr void operator delete(void* ptr)
     {
         return ThreadState::allocator.deallocate(static_cast<ThreadState*>(ptr),
                                                  1);
     }
 
-    static void init()
+    static constexpr void init()
     {
         ThreadState::get_referrers_name = "get_referrers";
         ThreadState::set_clocks_used_doing_gc(0);
@@ -188,7 +188,7 @@ public:
         assert(this->main_greenlet.REFCNT() == 2);
     }
 
-    inline void restore_exception_state()
+    inline constexpr void restore_exception_state()
     {
 #ifdef GREENLET_NEEDS_EXCEPTION_STATE_SAVED
         // It's probably important this be inlined and only call C
@@ -197,7 +197,7 @@ public:
 #endif
     }
 
-    inline bool has_main_greenlet() const noexcept
+    inline bool constexpr has_main_greenlet() const noexcept
     {
         return bool(this->main_greenlet);
     }
@@ -263,12 +263,12 @@ public:
     }
 
     template<typename T, refs::TypeChecker TC>
-    inline bool is_current(const refs::PyObjectPointer<T, TC>& obj) const
+    inline bool constexpr is_current(const refs::PyObjectPointer<T, TC>& obj) const
     {
         return this->current_greenlet.borrow_o() == obj.borrow_o();
     }
 
-    inline void set_current(const OwnedGreenlet& target)
+    inline constexpr void set_current(const OwnedGreenlet& target)
     {
         this->current_greenlet = target;
     }
@@ -285,7 +285,7 @@ private:
      * proceeding; otherwise, we would try (and fail) to raise an
      * exception in it and wind up right back in this list.
      */
-    inline void clear_deleteme_list(const bool murder=false)
+    inline constexpr void clear_deleteme_list(const bool murder=false)
     {
         if (!this->deleteme.empty()) {
             // It's possible we could add items to this list while
@@ -329,7 +329,7 @@ public:
     };
 
 
-    inline void set_tracefunc(BorrowedObject tracefunc)
+    inline constexpr void set_tracefunc(BorrowedObject tracefunc)
     {
         assert(tracefunc);
         if (tracefunc == BorrowedObject(Py_None)) {
@@ -345,7 +345,7 @@ public:
      * attempted to delete (has a refcount of 0) store it for later
      * deletion when the thread this state belongs to is current.
      */
-    inline void delete_when_thread_running(PyGreenlet* to_del)
+    inline constexpr void delete_when_thread_running(PyGreenlet* to_del)
     {
         Py_INCREF(to_del);
         this->deleteme.push_back(to_del);
@@ -363,7 +363,7 @@ public:
 #endif
     }
 
-    inline static void set_clocks_used_doing_gc(std::clock_t value)
+    inline static constexpr void set_clocks_used_doing_gc(std::clock_t value)
     {
 #ifdef Py_GIL_DISABLED
         ThreadState::_clocks_used_doing_gc.store(value, std::memory_order_relaxed);
@@ -372,7 +372,7 @@ public:
 #endif
     }
 
-    inline static void add_clocks_used_doing_gc(std::clock_t value)
+    inline static constexpr void add_clocks_used_doing_gc(std::clock_t value)
     {
 #ifdef Py_GIL_DISABLED
         ThreadState::_clocks_used_doing_gc.fetch_add(value, std::memory_order_relaxed);

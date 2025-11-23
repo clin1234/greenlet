@@ -14,13 +14,13 @@
 
 namespace greenlet {
 
-void* BrokenGreenlet::operator new(size_t UNUSED(count))
+constexpr void* BrokenGreenlet::operator new(size_t UNUSED(count))
 {
     return allocator.allocate(1);
 }
 
 
-void BrokenGreenlet::operator delete(void* ptr)
+void constexpr BrokenGreenlet::operator delete(void* ptr)
 {
     return allocator.deallocate(static_cast<BrokenGreenlet*>(ptr),
                                 1);
@@ -28,7 +28,7 @@ void BrokenGreenlet::operator delete(void* ptr)
 
 greenlet::PythonAllocator<greenlet::BrokenGreenlet> greenlet::BrokenGreenlet::allocator;
 
-bool
+constexpr bool
 BrokenGreenlet::force_slp_switch_error() const noexcept
 {
     return this->_force_slp_switch_error;

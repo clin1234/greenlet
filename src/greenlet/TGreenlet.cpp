@@ -40,13 +40,13 @@ Greenlet::~Greenlet()
     this->_self->pimpl = nullptr;
 }
 
-bool
+constexpr bool
 Greenlet::force_slp_switch_error() const noexcept
 {
     return false;
 }
 
-void
+constexpr void
 Greenlet::release_args()
 {
     this->switch_args.CLEAR();
@@ -68,7 +68,7 @@ Greenlet::throw_GreenletExit_during_dealloc(const ThreadState& UNUSED(current_th
     return this->g_switch();
 }
 
-inline void
+inline constexpr void
 Greenlet::slp_restore_state() noexcept
 {
 #ifdef SLP_BEFORE_RESTORE_STATE
@@ -79,7 +79,7 @@ Greenlet::slp_restore_state() noexcept
 }
 
 
-inline int
+inline int constexpr
 Greenlet::slp_save_state(char *const stackref) noexcept
 {
     // XXX: This used to happen in the middle, before saving, but
@@ -214,7 +214,7 @@ Greenlet::g_switchstack(void)
 }
 
 
-inline void
+inline constexpr void
 Greenlet::check_switch_allowed() const
 {
     // TODO: Make this take a parameter of the current greenlet,
@@ -307,7 +307,7 @@ Greenlet::context() const
 }
 
 
-void
+constexpr void
 Greenlet::context(BorrowedObject given)
 {
     using greenlet::PythonStateContext;
@@ -466,7 +466,7 @@ Greenlet::g_switch_finish(const switchstack_result_t& err)
     }
 }
 
-void
+void constexpr
 Greenlet::g_calltrace(const OwnedObject& tracefunc,
                       const greenlet::refs::ImmortalEventName& event,
                       const BorrowedGreenlet& origin,
@@ -495,7 +495,7 @@ Greenlet::g_calltrace(const OwnedObject& tracefunc,
     );
 }
 
-void
+constexpr void
 Greenlet::murder_in_place()
 {
     if (this->active()) {
@@ -504,7 +504,7 @@ Greenlet::murder_in_place()
     }
 }
 
-inline void
+inline constexpr void
 Greenlet::deactivate_and_free()
 {
     if (!this->active()) {
@@ -527,7 +527,7 @@ Greenlet::deactivate_and_free()
     this->python_state.tp_clear(true);
 }
 
-bool
+constexpr bool
 Greenlet::belongs_to_thread(const ThreadState* thread_state) const
 {
     if (!this->thread_state() // not running anywhere, or thread
@@ -539,7 +539,7 @@ Greenlet::belongs_to_thread(const ThreadState* thread_state) const
 }
 
 
-void
+constexpr void
 Greenlet::deallocing_greenlet_in_thread(const ThreadState* current_thread_state)
 {
     /* Cannot raise an exception to kill the greenlet if
@@ -577,7 +577,7 @@ Greenlet::deallocing_greenlet_in_thread(const ThreadState* current_thread_state)
 }
 
 
-int
+constexpr int
 Greenlet::tp_traverse(visitproc visit, void* arg)
 {
 
@@ -597,7 +597,7 @@ Greenlet::tp_traverse(visitproc visit, void* arg)
     return 0;
 }
 
-int
+constexpr int
 Greenlet::tp_clear()
 {
     bool own_top_frame = this->was_running_in_dead_thread();
@@ -606,7 +606,7 @@ Greenlet::tp_clear()
     return 0;
 }
 
-bool Greenlet::is_currently_running_in_some_thread() const
+constexpr bool Greenlet::is_currently_running_in_some_thread() const
 {
     return this->stack_state.active() && !this->python_state.top_frame();
 }

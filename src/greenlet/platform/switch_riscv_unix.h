@@ -8,7 +8,7 @@
 		     "fs2", "fs3", "fs4", "fs5", "fs6", "fs7", "fs8", "fs9", \
 		     "fs10", "fs11"
 
-static int
+static constexpr int
 slp_switch(void)
 {
   int ret;

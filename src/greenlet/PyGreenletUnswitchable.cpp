@@ -56,14 +56,14 @@ green_unswitchable_new(PyTypeObject* type, PyObject* UNUSED(args), PyObject* UNU
     return o;
 }
 
-static PyObject*
+constexpr static PyObject*
 green_unswitchable_getforce(PyGreenlet* self, void* UNUSED(context))
 {
     BrokenGreenlet* broken = dynamic_cast<BrokenGreenlet*>(self->pimpl);
     return PyBool_FromLong(broken->_force_switch_error);
 }
 
-static int
+static constexpr int
 green_unswitchable_setforce(PyGreenlet* self, PyObject* nforce, void* UNUSED(context))
 {
     if (!nforce) {
@@ -82,14 +82,14 @@ green_unswitchable_setforce(PyGreenlet* self, PyObject* nforce, void* UNUSED(con
     return 0;
 }
 
-static PyObject*
+constexpr static PyObject*
 green_unswitchable_getforceslp(PyGreenlet* self, void* UNUSED(context))
 {
     BrokenGreenlet* broken = dynamic_cast<BrokenGreenlet*>(self->pimpl);
     return PyBool_FromLong(broken->_force_slp_switch_error);
 }
 
-static int
+static constexpr int
 green_unswitchable_setforceslp(PyGreenlet* self, PyObject* nforce, void* UNUSED(context))
 {
     if (!nforce) {

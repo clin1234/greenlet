@@ -9,7 +9,7 @@
 // r14 Frame pointer, FP
 // r15 Stack pointer, SP
 
-static int
+static constexpr int
 slp_switch(void)
 {
     int err;

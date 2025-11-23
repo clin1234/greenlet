@@ -42,7 +42,7 @@
 # define ATTR_NOCLONE
 #endif
 
-static int
+static constexpr int
 slp_switch(void)
 {
     int err;

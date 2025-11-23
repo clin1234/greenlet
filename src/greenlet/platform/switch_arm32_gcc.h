@@ -49,7 +49,7 @@
 #define REGS_TO_SAVE REGS_TO_SAVE_GENERAL, "f4", "f5", "f6", "f7"
 #endif
 
-static int
+static constexpr int
 #ifdef __GNUC__
 __attribute__((optimize("no-omit-frame-pointer")))
 #endif

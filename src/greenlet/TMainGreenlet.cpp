@@ -30,13 +30,13 @@ static Py_ssize_t G_TOTAL_MAIN_GREENLETS;
 namespace greenlet {
 greenlet::PythonAllocator<MainGreenlet> MainGreenlet::allocator;
 
-void* MainGreenlet::operator new(size_t UNUSED(count))
+constexpr void* MainGreenlet::operator new(size_t UNUSED(count))
 {
     return allocator.allocate(1);
 }
 
 
-void MainGreenlet::operator delete(void* ptr)
+constexpr void MainGreenlet::operator delete(void* ptr)
 {
     return allocator.deallocate(static_cast<MainGreenlet*>(ptr),
                                 1);
@@ -63,7 +63,7 @@ MainGreenlet::thread_state() const noexcept
     return this->_thread_state;
 }
 
-void
+constexpr void
 MainGreenlet::thread_state(ThreadState* t) noexcept
 {
     assert(!t);
@@ -71,7 +71,7 @@ MainGreenlet::thread_state(ThreadState* t) noexcept
 }
 
 
-const BorrowedMainGreenlet
+constexpr BorrowedMainGreenlet
 MainGreenlet::main_greenlet() const
 {
     return this->_self;
@@ -83,7 +83,7 @@ MainGreenlet::find_main_greenlet_in_lineage() const
     return BorrowedMainGreenlet(this->_self);
 }
 
-bool
+constexpr bool
 MainGreenlet::was_running_in_dead_thread() const noexcept
 {
     return !this->_thread_state;
@@ -115,7 +115,7 @@ MainGreenlet::g_switch()
     return err.the_new_current_greenlet->g_switch_finish(err);
 }
 
-int
+constexpr int
 MainGreenlet::tp_traverse(visitproc visit, void* arg)
 {
     if (this->_thread_state) {
@@ -128,19 +128,19 @@ MainGreenlet::tp_traverse(visitproc visit, void* arg)
     return Greenlet::tp_traverse(visit, arg);
 }
 
-const OwnedObject&
+constexpr OwnedObject&
 MainGreenlet::run() const
 {
     throw AttributeError("Main greenlets do not have a run attribute.");
 }
 
-void
+constexpr void
 MainGreenlet::run(const BorrowedObject UNUSED(nrun))
 {
    throw AttributeError("Main greenlets do not have a run attribute.");
 }
 
-void
+constexpr void
 MainGreenlet::parent(const BorrowedObject raw_new_parent)
 {
     if (!raw_new_parent) {
@@ -149,7 +149,7 @@ MainGreenlet::parent(const BorrowedObject raw_new_parent)
     throw AttributeError("cannot set the parent of a main greenlet");
 }
 
-const OwnedGreenlet
+constexpr OwnedGreenlet
 MainGreenlet::parent() const
 {
     return OwnedGreenlet(); // null becomes None

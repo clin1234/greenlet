@@ -76,14 +76,14 @@ StackState& StackState::operator=(const StackState& other)
     return *this;
 }
 
-inline void StackState::free_stack_copy() noexcept
+inline constexpr void StackState::free_stack_copy() noexcept
 {
     PyMem_Free(this->stack_copy);
     this->stack_copy = nullptr;
     this->_stack_saved = 0;
 }
 
-inline void StackState::copy_heap_to_stack(const StackState& current) noexcept
+inline constexpr void StackState::copy_heap_to_stack(const StackState& current) noexcept
 {
 
     /* Restore the heap copy back into the C stack */
@@ -103,7 +103,7 @@ inline void StackState::copy_heap_to_stack(const StackState& current) noexcept
     // cerr << "\tFinished with: " << *this << endl;
 }
 
-inline int StackState::copy_stack_to_heap_up_to(const char* const stop) noexcept
+inline int constexpr StackState::copy_stack_to_heap_up_to(const char* const stop) noexcept
 {
     /* Save more of g's stack into the heap -- at least up to 'stop'
        g->stack_stop |________|
@@ -131,7 +131,7 @@ inline int StackState::copy_stack_to_heap_up_to(const char* const stop) noexcept
     return 0;
 }
 
-inline int StackState::copy_stack_to_heap(char* const stackref,
+inline int constexpr StackState::copy_stack_to_heap(char* const stackref,
                                           const StackState& current) noexcept
 {
     /* must free all the C stack up to target_stop */
@@ -161,28 +161,28 @@ inline int StackState::copy_stack_to_heap(char* const stackref,
     return 0;
 }
 
-inline bool StackState::started() const noexcept
+inline bool constexpr StackState::started() const noexcept
 {
     return this->stack_stop != nullptr;
 }
 
-inline bool StackState::main() const noexcept
+inline bool constexpr StackState::main() const noexcept
 {
     return this->stack_stop == (char*)-1;
 }
 
-inline bool StackState::active() const noexcept
+inline bool constexpr StackState::active() const noexcept
 {
     return this->_stack_start != nullptr;
 }
 
-inline void StackState::set_active() noexcept
+inline constexpr void StackState::set_active() noexcept
 {
     assert(this->_stack_start == nullptr);
     this->_stack_start = (char*)1;
 }
 
-inline void StackState::set_inactive() noexcept
+inline constexpr void StackState::set_inactive() noexcept
 {
     this->_stack_start = nullptr;
     // XXX: What if we still have memory out there?
@@ -200,7 +200,7 @@ inline void StackState::set_inactive() noexcept
     }
 }
 
-inline intptr_t StackState::stack_saved() const noexcept
+inline constexpr intptr_t StackState::stack_saved() const noexcept
 {
     return this->_stack_saved;
 }
@@ -211,7 +211,7 @@ inline char* StackState::stack_start() const noexcept
 }
 
 
-inline StackState StackState::make_main() noexcept
+inline constexpr StackState StackState::make_main() noexcept
 {
     StackState s;
     s._stack_start = (char*)1;

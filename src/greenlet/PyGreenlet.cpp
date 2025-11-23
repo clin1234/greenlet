@@ -75,7 +75,7 @@ green_new(PyTypeObject* type, PyObject* UNUSED(args), PyObject* UNUSED(kwds))
 // BorrowedGreenlet and BorrowedObject --- although in theory
 // these should be binary layout compatible, that may not be
 // guaranteed to be the case (32-bit linux ppc possibly).
-static int
+static constexpr int
 green_init(PyGreenlet* self, PyObject* args, PyObject* kwargs)
 {
     PyArgParseParam run;
@@ -105,7 +105,7 @@ green_init(PyGreenlet* self, PyObject* args, PyObject* kwargs)
 
 
 
-static int
+static constexpr int
 green_traverse(PyGreenlet* self, visitproc visit, void* arg)
 {
     // We must only visit referenced objects, i.e. only objects
@@ -138,7 +138,7 @@ green_traverse(PyGreenlet* self, visitproc visit, void* arg)
     return self->pimpl->tp_traverse(visit, arg);
 }
 
-static int
+static constexpr int
 green_is_gc(PyObject* _self)
 {
     BorrowedGreenlet self(_self);
@@ -170,7 +170,7 @@ green_is_gc(PyObject* _self)
 }
 
 
-static int
+static constexpr int
 green_clear(PyGreenlet* self)
 {
     /* Greenlet is only cleared if it is about to be collected.
@@ -186,7 +186,7 @@ green_clear(PyGreenlet* self)
 /**
  * Returns 0 on failure (the object was resurrected) or 1 on success.
  **/
-static int
+static constexpr int
 _green_dealloc_kill_started_non_main_greenlet(BorrowedGreenlet self)
 {
     /* Hacks hacks hacks copied from instance_dealloc() */
@@ -273,7 +273,7 @@ _green_dealloc_kill_started_non_main_greenlet(BorrowedGreenlet self)
 }
 
 
-static void
+static constexpr void
 green_dealloc(PyGreenlet* self)
 {
     PyObject_GC_UnTrack(self);
@@ -342,7 +342,7 @@ PyDoc_STRVAR(
     "function will simply return the arguments using the same rules as\n"
     "above.\n");
 
-static PyObject*
+constexpr static PyObject*
 green_switch(PyGreenlet* self, PyObject* args, PyObject* kwargs)
 {
     using greenlet::SwitchingArgs;
@@ -425,7 +425,7 @@ PyDoc_STRVAR(
     "`greenlet.GreenletExit` exception, which would not propagate\n"
     "from ``g_raiser`` to ``g``.\n");
 
-static PyObject*
+constexpr static PyObject*
 green_throw(PyGreenlet* self, PyObject* args)
 {
     PyArgParseParam typ(mod_globs->PyExc_GreenletExit);
@@ -451,7 +451,7 @@ green_throw(PyGreenlet* self, PyObject* args)
     }
 }
 
-static int
+static constexpr int
 green_bool(PyGreenlet* self)
 {
     return self->pimpl->active();
@@ -460,7 +460,7 @@ green_bool(PyGreenlet* self)
 /**
  * CAUTION: Allocates memory, may run GC and arbitrary Python code.
  */
-static PyObject*
+constexpr static PyObject*
 green_getdict(PyGreenlet* self, void* UNUSED(context))
 {
     if (self->dict == NULL) {
@@ -473,7 +473,7 @@ green_getdict(PyGreenlet* self, void* UNUSED(context))
     return self->dict;
 }
 
-static int
+static constexpr int
 green_setdict(PyGreenlet* self, PyObject* val, void* UNUSED(context))
 {
     PyObject* tmp;
@@ -506,7 +506,7 @@ _green_not_dead(BorrowedGreenlet self)
 }
 
 
-static PyObject*
+constexpr static PyObject*
 green_getdead(PyGreenlet* self, void* UNUSED(context))
 {
     if (_green_not_dead(self)) {
@@ -517,14 +517,14 @@ green_getdead(PyGreenlet* self, void* UNUSED(context))
     }
 }
 
-static PyObject*
+constexpr static PyObject*
 green_get_stack_saved(PyGreenlet* self, void* UNUSED(context))
 {
     return PyLong_FromSsize_t(self->pimpl->stack_saved());
 }
 
 
-static PyObject*
+constexpr static PyObject*
 green_getrun(PyGreenlet* self, void* UNUSED(context))
 {
     try {
@@ -537,7 +537,7 @@ green_getrun(PyGreenlet* self, void* UNUSED(context))
 }
 
 
-static int
+static constexpr int
 green_setrun(PyGreenlet* self, PyObject* nrun, void* UNUSED(context))
 {
     try {
@@ -549,14 +549,14 @@ green_setrun(PyGreenlet* self, PyObject* nrun, void* UNUSED(context))
     }
 }
 
-static PyObject*
+constexpr static PyObject*
 green_getparent(PyGreenlet* self, void* UNUSED(context))
 {
     return BorrowedGreenlet(self)->parent().acquire_or_None();
 }
 
 
-static int
+static constexpr int
 green_setparent(PyGreenlet* self, PyObject* nparent, void* UNUSED(context))
 {
     try {
@@ -569,7 +569,7 @@ green_setparent(PyGreenlet* self, PyObject* nparent, void* UNUSED(context))
 }
 
 
-static PyObject*
+constexpr static PyObject*
 green_getcontext(const PyGreenlet* self, void* UNUSED(context))
 {
     const Greenlet *const g = self->pimpl;
@@ -582,7 +582,7 @@ green_getcontext(const PyGreenlet* self, void* UNUSED(context))
     }
 }
 
-static int
+static constexpr int
 green_setcontext(PyGreenlet* self, PyObject* nctx, void* UNUSED(context))
 {
     try {
@@ -595,7 +595,7 @@ green_setcontext(PyGreenlet* self, PyObject* nctx, void* UNUSED(context))
 }
 
 
-static PyObject*
+constexpr static PyObject*
 green_getframe(PyGreenlet* self, void* UNUSED(context))
 {
     const PythonState::OwnedFrame& top_frame = BorrowedGreenlet(self)->top_frame();
@@ -603,7 +603,7 @@ green_getframe(PyGreenlet* self, void* UNUSED(context))
 }
 
 
-static PyObject*
+constexpr static PyObject*
 green_getstate(PyGreenlet* self)
 {
     PyErr_Format(PyExc_TypeError,
@@ -612,7 +612,7 @@ green_getstate(PyGreenlet* self)
     return nullptr;
 }
 
-static PyObject*
+constexpr static PyObject*
 green_repr(PyGreenlet* _self)
 {
     BorrowedGreenlet self(_self);

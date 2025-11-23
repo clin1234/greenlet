@@ -49,7 +49,7 @@
 #include "Windows.h"
 #define CANNOT_READ_MEM(p, bytes) IsBadReadPtr(p, bytes)
 
-static int IS_ON_STACK(void*p)
+static constexpr int IS_ON_STACK(void*p)
 {
     int stackref;
     intptr_t stackbase = ((intptr_t)&stackref) & 0xfffff000;

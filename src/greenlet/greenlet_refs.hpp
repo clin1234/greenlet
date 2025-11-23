@@ -52,7 +52,7 @@ namespace greenlet
 
             PyTypeObject* typ = Py_TYPE(p);
             // fast, common path. (PyObject_TypeCheck is a macro or
-            // static inline function, and it also does a
+            // static constexpr inline function, and it also does a
             // direct comparison of the type pointers, but its fast
             // path only handles one type)
             if (typ == &PyGreenlet_Type) {
@@ -189,49 +189,49 @@ namespace greenlet {
         // TODO: This should probably not exist here, but be moved
         // down to relevant sub-types.
 
-        T* borrow() const noexcept
+        constexpr T* borrow() const noexcept
         {
             return this->p;
         }
 
-        PyObject* borrow_o() const noexcept
+        constexpr PyObject* borrow_o() const noexcept
         {
             return reinterpret_cast<PyObject*>(this->p);
         }
 
-         T* operator->() const noexcept
+        constexpr T* operator->() const noexcept
         {
             return this->p;
         }
 
-        bool is_None() const noexcept
+        constexpr bool is_None() const noexcept
         {
             return this->p == Py_None;
         }
 
-        PyObject* acquire_or_None() const noexcept
+        constexpr PyObject* acquire_or_None() const noexcept
         {
             PyObject* result = this->p ? reinterpret_cast<PyObject*>(this->p) : Py_None;
             Py_INCREF(result);
             return result;
         }
 
-        explicit operator bool() const noexcept
+        constexpr explicit operator bool() const noexcept
         {
             return this->p != nullptr;
         }
 
-        bool operator!() const noexcept
+        constexpr bool operator!() const noexcept
         {
             return this->p == nullptr;
         }
 
-        Py_ssize_t REFCNT() const noexcept
+        constexpr Py_ssize_t REFCNT() const noexcept
         {
             return p ? Py_REFCNT(p) : -42;
         }
 
-        PyTypeObject* TYPE() const noexcept
+        constexpr PyTypeObject* TYPE() const noexcept
         {
             return p ? Py_TYPE(p) : nullptr;
         }
@@ -256,7 +256,7 @@ namespace greenlet {
             TC(t);
             p = reinterpret_cast<T*>(t);
         }
-        void* _get_raw_pointer() const
+        constexpr void* _get_raw_pointer() const
         {
             return p;
         }
@@ -278,19 +278,19 @@ namespace greenlet {
 #endif
 
     template<typename T, TypeChecker TC>
-    inline bool operator==(const PyObjectPointer<T, TC>& lhs, const PyObject* const rhs) noexcept
+    constexpr inline bool operator==(const PyObjectPointer<T, TC>& lhs, const PyObject* const rhs) noexcept
     {
         return static_cast<const void*>(lhs.borrow_o()) == static_cast<const void*>(rhs);
     }
 
     template<typename T, TypeChecker TC, typename X, TypeChecker XC>
-    inline bool operator==(const PyObjectPointer<T, TC>& lhs, const PyObjectPointer<X, XC>& rhs) noexcept
+    constexpr inline bool  operator==(const PyObjectPointer<T, TC>& lhs, const PyObjectPointer<X, XC>& rhs) noexcept
     {
         return lhs.borrow_o() == rhs.borrow_o();
     }
 
     template<typename T, TypeChecker TC, typename X, TypeChecker XC>
-    inline bool operator!=(const PyObjectPointer<T, TC>& lhs,
+    constexpr inline bool operator!=(const PyObjectPointer<T, TC>& lhs,
                            const PyObjectPointer<X, XC>& rhs) noexcept
     {
         return lhs.borrow_o() != rhs.borrow_o();
@@ -303,7 +303,7 @@ namespace greenlet {
         friend class OwnedList;
 
     protected:
-        explicit OwnedReference(T* it) : PyObjectPointer<T, TC>(it)
+        constexpr explicit OwnedReference(T* it) : PyObjectPointer<T, TC>(it)
         {
         }
 
@@ -387,7 +387,7 @@ namespace greenlet {
             return this->operator=(reinterpret_cast<T*>(op));
         }
 
-        inline void steal(T* other)
+        inline constexpr void steal(T* other)
         {
             assert(this->p == nullptr);
             TC(other);
@@ -424,7 +424,7 @@ namespace greenlet {
         }
     };
 
-    static inline
+    static constexpr inline
     void operator<<=(PyObject*& target, OwnedObject& o)
     {
         target = o.relinquish_ownership();
@@ -703,7 +703,7 @@ namespace greenlet {
                            : nullptr)
         {}
 
-        inline bool PyExceptionMatches() const
+        inline bool constexpr PyExceptionMatches() const
         {
             return PyErr_ExceptionMatches(this->p) > 0;
         }
@@ -798,7 +798,7 @@ namespace greenlet {
         return OwnedObject::consuming(PyObject_Call(this->p, args.borrow(), kwargs.borrow()));
     }
 
-    inline void
+    inline constexpr void
     ListChecker(void * p)
     {
         if (!p) {
@@ -839,7 +839,7 @@ namespace greenlet {
             return *this;
         }
 
-        inline bool empty() const
+        inline bool constexpr empty() const
         {
             return PyList_GET_SIZE(p) == 0;
         }
@@ -854,7 +854,7 @@ namespace greenlet {
             return PyList_GET_ITEM(p, index);
         }
 
-        inline void clear()
+        inline constexpr void clear()
         {
             PyList_SetSlice(p, 0, PyList_GET_SIZE(p), NULL);
         }
@@ -931,11 +931,11 @@ namespace greenlet {
         // To allow declaring these and passing them to
         // PyErr_Fetch we implement the empty constructor,
         // and the address operator.
-        PyErrFetchParam() : PyObjectPointer<>(nullptr)
+        constexpr PyErrFetchParam() : PyObjectPointer<>(nullptr)
         {
         }
 
-        PyObject** operator&()
+        constexpr inline PyObject** operator&()
         {
             return &this->p;
         }
@@ -943,7 +943,7 @@ namespace greenlet {
         // This allows us to pass one directly without the &,
         // BUT it has higher precedence than the bool operator
         // if it's not explicit.
-        operator PyObject**()
+        constexpr operator PyObject**()
         {
             return &this->p;
         }
@@ -951,7 +951,7 @@ namespace greenlet {
         // We don't want to be able to pass these to Py_DECREF and
         // such so we don't have the implicit PyObject* conversion.
 
-        inline PyObject* relinquish_ownership()
+        constexpr inline PyObject* relinquish_ownership()
         {
             PyObject* result = this->p;
             this->p = nullptr;
@@ -970,22 +970,22 @@ namespace greenlet {
 
     public:
         // Unlike OwnedObject, this increments the refcount.
-        OwnedErrPiece(PyObject* p=nullptr) : OwnedObject(p)
+        constexpr OwnedErrPiece(PyObject* p=nullptr) : OwnedObject(p)
         {
             this->acquire();
         }
 
-        PyObject** operator&()
+        constexpr inline PyObject** operator&()
         {
             return &this->p;
         }
 
-        inline operator PyObject*() const
+        constexpr inline operator PyObject*() const
         {
             return this->p;
         }
 
-        operator PyTypeObject*() const
+        constexpr operator PyTypeObject*() const
         {
             return reinterpret_cast<PyTypeObject*>(this->p);
         }
@@ -1001,7 +1001,7 @@ namespace greenlet {
     public:
         // Takes new references; if we're destroyed before
         // restoring the error, we drop the references.
-        PyErrPieces(PyObject* t, PyObject* v, PyObject* tb) :
+        constexpr PyErrPieces(PyObject* t, PyObject* v, PyObject* tb) :
             type(t),
             instance(v),
             traceback(tb),
@@ -1010,7 +1010,7 @@ namespace greenlet {
             this->normalize();
         }
 
-        PyErrPieces() :
+        constexpr PyErrPieces() :
             restored(0)
         {
             // PyErr_Fetch transfers ownership to us, so
@@ -1023,7 +1023,7 @@ namespace greenlet {
             traceback.steal(tb.relinquish_ownership());
         }
 
-        void PyErrRestore()
+        constexpr void PyErrRestore()
         {
             // can only do this once
             assert(!this->restored);
@@ -1036,7 +1036,7 @@ namespace greenlet {
         }
 
     private:
-        void normalize()
+        constexpr void normalize()
         {
             // First, check the traceback argument, replacing None,
             // with NULL
@@ -1103,11 +1103,11 @@ namespace greenlet {
     private:
         G_NO_COPIES_OF_CLS(PyArgParseParam);
     public:
-        explicit PyArgParseParam(PyObject* p=nullptr) : BorrowedObject(p)
+        constexpr explicit PyArgParseParam(PyObject* p=nullptr) : BorrowedObject(p)
         {
         }
 
-        inline PyObject** operator&()
+        constexpr inline PyObject** operator&()
         {
             return &this->p;
         }

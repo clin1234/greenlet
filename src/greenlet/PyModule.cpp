@@ -23,7 +23,7 @@ PyDoc_STRVAR(mod_getcurrent_doc,
              "Returns the current greenlet (i.e. the one which called this "
              "function).\n");
 
-static PyObject*
+constexpr static PyObject*
 mod_getcurrent(PyObject* UNUSED(module))
 {
     return GET_THREAD_STATE().state().get_current().relinquish_ownership_o();
@@ -33,7 +33,7 @@ PyDoc_STRVAR(mod_settrace_doc,
              "settrace(callback) -> object\n"
              "\n"
              "Sets a new tracing function and returns the previous one.\n");
-static PyObject*
+constexpr static PyObject*
 mod_settrace(PyObject* UNUSED(module), PyObject* args)
 {
     PyArgParseParam tracefunc;
@@ -56,7 +56,7 @@ PyDoc_STRVAR(mod_gettrace_doc,
              "\n"
              "Returns the currently set tracing function, or None.\n");
 
-static PyObject*
+constexpr static PyObject*
 mod_gettrace(PyObject* UNUSED(module))
 {
     OwnedObject tracefunc = GET_THREAD_STATE().state().get_tracefunc();
@@ -73,7 +73,7 @@ PyDoc_STRVAR(mod_set_thread_local_doc,
              "\n"
              "Set a value in the current thread-local dictionary. Debugging only.\n");
 
-static PyObject*
+constexpr static PyObject*
 mod_set_thread_local(PyObject* UNUSED(module), PyObject* args)
 {
     PyArgParseParam key;
@@ -99,7 +99,7 @@ PyDoc_STRVAR(mod_get_pending_cleanup_count_doc,
              "Get the number of greenlet cleanup operations pending. Testing only.\n");
 
 
-static PyObject*
+constexpr static PyObject*
 mod_get_pending_cleanup_count(PyObject* UNUSED(module))
 {
     LockGuard cleanup_lock(*mod_globs->thread_states_to_destroy_lock);
@@ -111,7 +111,7 @@ PyDoc_STRVAR(mod_get_total_main_greenlets_doc,
              "\n"
              "Quickly return the number of main greenlets that exist. Testing only.\n");
 
-static PyObject*
+constexpr static PyObject*
 mod_get_total_main_greenlets(PyObject* UNUSED(module))
 {
     return PyLong_FromSize_t(G_TOTAL_MAIN_GREENLETS);
@@ -141,7 +141,7 @@ PyDoc_STRVAR(mod_get_clocks_used_doing_optional_cleanup_doc,
              "in the future.\n"
              ".. versionadded:: 2.0"
              );
-static PyObject*
+constexpr static PyObject*
 mod_get_clocks_used_doing_optional_cleanup(PyObject* UNUSED(module))
 {
     std::clock_t clocks = ThreadState::clocks_used_doing_gc();
@@ -160,7 +160,7 @@ PyDoc_STRVAR(mod_enable_optional_cleanup_doc,
              "Enable or disable optional cleanup operations.\n"
              "See ``get_clocks_used_doing_optional_cleanup()`` for details.\n"
              );
-static PyObject*
+constexpr static PyObject*
 mod_enable_optional_cleanup(PyObject* UNUSED(module), PyObject* flag)
 {
     int is_true = PyObject_IsTrue(flag);
@@ -189,7 +189,7 @@ PyDoc_STRVAR(mod_get_tstate_trash_delete_nesting_doc,
              "get_tstate_trash_delete_nesting() -> Integer\n"
              "\n"
              "Return the 'trash can' nesting level. Testing only.\n");
-static PyObject*
+constexpr static PyObject*
 mod_get_tstate_trash_delete_nesting(PyObject* UNUSED(module))
 {
     PyThreadState* tstate = PyThreadState_GET();

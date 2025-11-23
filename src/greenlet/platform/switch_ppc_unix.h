@@ -44,7 +44,7 @@
 #define REGS_TO_SAVE "r13", "r14", "r15", "r16", "r17", "r18", "r19", "r20", \
        "r21", "r22", "r23", "r24", "r25", "r26", "r27", "r28", "r29", \
        "cr2", "cr3", "cr4"
-static int
+static constexpr int
 slp_switch(void)
 {
     int err;

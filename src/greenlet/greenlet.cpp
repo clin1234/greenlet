@@ -4,45 +4,40 @@
  *
  *
  * Fix missing braces with:
- *   clang-tidy src/greenlet/greenlet.c -fix -checks="readability-braces-around-statements"
-*/
-#include <cstdlib>
-#include <string>
+ *   clang-tidy src/greenlet/greenlet.c -fix
+ * -checks="readability-braces-around-statements"
+ */
 #include <algorithm>
+#include <cstdlib>
 #include <exception>
-
+#include <string>
 
 #define PY_SSIZE_T_CLEAN
 #include <Python.h>
-#include "structmember.h" // PyMemberDef
 
 #include "greenlet_internal.hpp"
+#include "structmember.h"  // PyMemberDef
 // Code after this point can assume access to things declared in stdint.h,
-// including the fixed-width types. This goes for the platform-specific switch functions
-// as well.
-#include "greenlet_refs.hpp"
-#include "greenlet_slp_switch.hpp"
-
-#include "greenlet_thread_support.hpp"
-#include "TGreenlet.hpp"
-
-#include "TGreenletGlobals.cpp"
-
-#include "TGreenlet.cpp"
-#include "TMainGreenlet.cpp"
-#include "TUserGreenlet.cpp"
+// including the fixed-width types. This goes for the platform-specific switch
+// functions as well.
+#include "CObjects.cpp"
+#include "PyGreenlet.cpp"
+#include "PyGreenletUnswitchable.cpp"
 #include "TBrokenGreenlet.cpp"
 #include "TExceptionState.cpp"
+#include "TGreenlet.cpp"
+#include "TGreenlet.hpp"
+#include "TGreenletGlobals.cpp"
+#include "TMainGreenlet.cpp"
 #include "TPythonState.cpp"
 #include "TStackState.cpp"
-
 #include "TThreadState.hpp"
 #include "TThreadStateCreator.hpp"
 #include "TThreadStateDestroy.cpp"
-
-#include "PyGreenlet.cpp"
-#include "PyGreenletUnswitchable.cpp"
-#include "CObjects.cpp"
+#include "TUserGreenlet.cpp"
+#include "greenlet_refs.hpp"
+#include "greenlet_slp_switch.hpp"
+#include "greenlet_thread_support.hpp"
 
 using greenlet::LockGuard;
 using greenlet::LockInitError;
@@ -52,25 +47,26 @@ using greenlet::Require;
 using greenlet::g_handle_exit;
 using greenlet::single_result;
 
-using greenlet::Greenlet;
-using greenlet::UserGreenlet;
-using greenlet::MainGreenlet;
 using greenlet::BrokenGreenlet;
-using greenlet::ThreadState;
+using greenlet::Greenlet;
+using greenlet::MainGreenlet;
 using greenlet::PythonState;
-
-
+using greenlet::ThreadState;
+using greenlet::UserGreenlet;
 
 // ******* Implementation of things from included files
-template<typename T, greenlet::refs::TypeChecker TC>
-greenlet::refs::_BorrowedGreenlet<T, TC>& greenlet::refs::_BorrowedGreenlet<T, TC>::operator=(const greenlet::refs::BorrowedObject& other)
+template <typename T, greenlet::refs::TypeChecker TC>
+greenlet::refs::_BorrowedGreenlet<T, TC>&
+greenlet::refs::_BorrowedGreenlet<T, TC>::operator=(
+    const greenlet::refs::BorrowedObject& other)
 {
     this->_set_raw_pointer(static_cast<PyObject*>(other));
     return *this;
 }
 
 template <typename T, greenlet::refs::TypeChecker TC>
-inline greenlet::refs::_BorrowedGreenlet<T, TC>::operator Greenlet*() const noexcept
+inline greenlet::refs::_BorrowedGreenlet<T, TC>::operator Greenlet*()
+    const noexcept
 {
     if (!this->p) {
         return nullptr;
@@ -78,24 +74,23 @@ inline greenlet::refs::_BorrowedGreenlet<T, TC>::operator Greenlet*() const noex
     return reinterpret_cast<PyGreenlet*>(this->p)->pimpl;
 }
 
-template<typename T, greenlet::refs::TypeChecker TC>
-greenlet::refs::_BorrowedGreenlet<T, TC>::_BorrowedGreenlet(const BorrowedObject& p)
+template <typename T, greenlet::refs::TypeChecker TC>
+greenlet::refs::_BorrowedGreenlet<T, TC>::_BorrowedGreenlet(
+    const BorrowedObject& p)
     : BorrowedReference<T, TC>(nullptr)
 {
-
     this->_set_raw_pointer(p.borrow());
 }
 
 template <typename T, greenlet::refs::TypeChecker TC>
-inline greenlet::refs::_OwnedGreenlet<T, TC>::operator Greenlet*() const noexcept
+inline greenlet::refs::_OwnedGreenlet<T, TC>::operator Greenlet*()
+    const noexcept
 {
     if (!this->p) {
         return nullptr;
     }
     return reinterpret_cast<PyGreenlet*>(this->p)->pimpl;
 }
-
-
 
 #ifdef __clang__
 #    pragma clang diagnostic push
@@ -107,7 +102,6 @@ inline greenlet::refs::_OwnedGreenlet<T, TC>::operator Greenlet*() const noexcep
 // (The python APIs aren't const correct and accept writable char*)
 #    pragma GCC diagnostic ignored "-Wwrite-strings"
 #endif
-
 
 /***********************************************************
 
@@ -164,9 +158,6 @@ The running greenlet's stack_start is undefined but not NULL.
 
  ***********************************************************/
 
-
-
-
 /***********************************************************/
 
 /* Some functions must not be inlined:
@@ -187,25 +178,23 @@ not eligible for inlining.
 */
 
 extern "C" {
-static int GREENLET_NOINLINE(slp_save_state_trampoline)(char* stackref)
+static int
+GREENLET_NOINLINE(slp_save_state_trampoline)(char* stackref)
 {
     return switching_thread_state->slp_save_state(stackref);
 }
-static void GREENLET_NOINLINE(slp_restore_state_trampoline)()
+static void
+GREENLET_NOINLINE(slp_restore_state_trampoline)()
 {
     switching_thread_state->slp_restore_state();
 }
 }
 
-
 /***********************************************************/
-
 
 #include "PyModule.cpp"
 
-
-
-static PyObject*
+constexpr static PyObject*
 greenlet_internal_mod_init() noexcept
 {
     static void* _PyGreenlet_API[PyGreenlet_API_pointers];
@@ -229,7 +218,8 @@ greenlet_internal_mod_init() noexcept
         m.PyAddObject("GREENLET_USE_CONTEXT_VARS", 1L);
         m.PyAddObject("GREENLET_USE_STANDARD_THREADING", 1L);
 
-        OwnedObject clocks_per_sec = OwnedObject::consuming(PyLong_FromSsize_t(CLOCKS_PER_SEC));
+        OwnedObject clocks_per_sec =
+            OwnedObject::consuming(PyLong_FromSsize_t(CLOCKS_PER_SEC));
         m.PyAddObject("CLOCKS_PER_SEC", clocks_per_sec);
 
         /* also publish module-level data as attributes of the greentype. */
@@ -250,31 +240,35 @@ greenlet_internal_mod_init() noexcept
         _PyGreenlet_API[PyGreenlet_Type_NUM] = (void*)&PyGreenlet_Type;
 
         /* exceptions */
-        _PyGreenlet_API[PyExc_GreenletError_NUM] = (void*)mod_globs->PyExc_GreenletError;
-        _PyGreenlet_API[PyExc_GreenletExit_NUM] = (void*)mod_globs->PyExc_GreenletExit;
+        _PyGreenlet_API[PyExc_GreenletError_NUM] =
+            (void*)mod_globs->PyExc_GreenletError;
+        _PyGreenlet_API[PyExc_GreenletExit_NUM] =
+            (void*)mod_globs->PyExc_GreenletExit;
 
         /* methods */
         _PyGreenlet_API[PyGreenlet_New_NUM] = (void*)PyGreenlet_New;
-        _PyGreenlet_API[PyGreenlet_GetCurrent_NUM] = (void*)PyGreenlet_GetCurrent;
+        _PyGreenlet_API[PyGreenlet_GetCurrent_NUM] =
+            (void*)PyGreenlet_GetCurrent;
         _PyGreenlet_API[PyGreenlet_Throw_NUM] = (void*)PyGreenlet_Throw;
         _PyGreenlet_API[PyGreenlet_Switch_NUM] = (void*)PyGreenlet_Switch;
-        _PyGreenlet_API[PyGreenlet_SetParent_NUM] = (void*)PyGreenlet_SetParent;
+        _PyGreenlet_API[PyGreenlet_SetParent_NUM] =
+            (void*)PyGreenlet_SetParent;
 
         /* Previously macros, but now need to be functions externally. */
         _PyGreenlet_API[PyGreenlet_MAIN_NUM] = (void*)Extern_PyGreenlet_MAIN;
-        _PyGreenlet_API[PyGreenlet_STARTED_NUM] = (void*)Extern_PyGreenlet_STARTED;
-        _PyGreenlet_API[PyGreenlet_ACTIVE_NUM] = (void*)Extern_PyGreenlet_ACTIVE;
-        _PyGreenlet_API[PyGreenlet_GET_PARENT_NUM] = (void*)Extern_PyGreenlet_GET_PARENT;
+        _PyGreenlet_API[PyGreenlet_STARTED_NUM] =
+            (void*)Extern_PyGreenlet_STARTED;
+        _PyGreenlet_API[PyGreenlet_ACTIVE_NUM] =
+            (void*)Extern_PyGreenlet_ACTIVE;
+        _PyGreenlet_API[PyGreenlet_GET_PARENT_NUM] =
+            (void*)Extern_PyGreenlet_GET_PARENT;
 
         /* XXX: Note that our module name is ``greenlet._greenlet``, but for
            backwards compatibility with existing C code, we need the _C_API to
            be directly in greenlet.
         */
         const NewReference c_api_object(Require(
-                                           PyCapsule_New(
-                                               (void*)_PyGreenlet_API,
-                                               "greenlet._C_API",
-                                               NULL)));
+            PyCapsule_New((void*)_PyGreenlet_API, "greenlet._C_API", NULL)));
         m.PyAddObject("_C_API", c_api_object);
         assert(c_api_object.REFCNT() == 2);
 
@@ -286,15 +280,17 @@ greenlet_internal_mod_init() noexcept
         //      << "\n\tPythonState    : " << sizeof(greenlet::PythonState)
         //      << "\n\tStackState     : " << sizeof(greenlet::StackState)
         //      << "\n\tSwitchingArgs  : " << sizeof(greenlet::SwitchingArgs)
-        //      << "\n\tOwnedObject    : " << sizeof(greenlet::refs::OwnedObject)
-        //      << "\n\tBorrowedObject : " << sizeof(greenlet::refs::BorrowedObject)
+        //      << "\n\tOwnedObject    : " <<
+        //      sizeof(greenlet::refs::OwnedObject)
+        //      << "\n\tBorrowedObject : " <<
+        //      sizeof(greenlet::refs::BorrowedObject)
         //      << "\n\tPyGreenlet     : " << sizeof(PyGreenlet)
         //      << endl;
 
 #ifdef Py_GIL_DISABLED
         PyUnstable_Module_SetGIL(m.borrow(), Py_MOD_GIL_NOT_USED);
 #endif
-        return m.borrow(); // But really it's the main reference.
+        return m.borrow();  // But really it's the main reference.
     }
     catch (const LockInitError& e) {
         PyErr_SetString(PyExc_MemoryError, e.what());
@@ -303,7 +299,6 @@ greenlet_internal_mod_init() noexcept
     catch (const PyErrOccurred&) {
         return NULL;
     }
-
 }
 
 extern "C" {
@@ -314,7 +309,7 @@ PyInit__greenlet(void)
     return greenlet_internal_mod_init();
 }
 
-}; // extern C
+};  // extern C
 
 #ifdef __clang__
 #    pragma clang diagnostic pop

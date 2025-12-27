@@ -375,7 +375,7 @@ namespace greenlet
             return this->switch_args;
         }
 
-        virtual const refs::BorrowedMainGreenlet main_greenlet() const = 0;
+        virtual refs::BorrowedMainGreenlet main_greenlet() const = 0;
 
         inline intptr_t stack_saved() const noexcept
         {
@@ -454,7 +454,7 @@ namespace greenlet
         }
         virtual refs::BorrowedMainGreenlet find_main_greenlet_in_lineage() const = 0;
 
-        virtual const OwnedGreenlet parent() const = 0;
+        virtual OwnedGreenlet parent() const = 0;
         virtual void parent(const refs::BorrowedObject new_parent) = 0;
 
         inline const PythonState::OwnedFrame& top_frame()
@@ -691,10 +691,10 @@ public:
         }
         virtual void run(const refs::BorrowedObject nrun);
 
-        virtual const OwnedGreenlet parent() const;
+        virtual OwnedGreenlet parent() const;
         virtual void parent(const refs::BorrowedObject new_parent);
 
-        virtual const refs::BorrowedMainGreenlet main_greenlet() const;
+        virtual refs::BorrowedMainGreenlet main_greenlet() const;
 
         virtual void murder_in_place();
         virtual bool belongs_to_thread(const ThreadState* state) const;
@@ -756,13 +756,13 @@ public:
         virtual ~MainGreenlet();
 
 
-        virtual const OwnedObject& run() const;
+        virtual OwnedObject& run() const;
         virtual void run(const refs::BorrowedObject nrun);
 
-        virtual const OwnedGreenlet parent() const;
+        virtual OwnedGreenlet parent() const;
         virtual void parent(const refs::BorrowedObject new_parent);
 
-        virtual const refs::BorrowedMainGreenlet main_greenlet() const;
+        virtual refs::BorrowedMainGreenlet main_greenlet() const;
 
         virtual refs::BorrowedMainGreenlet find_main_greenlet_in_lineage() const;
         virtual bool was_running_in_dead_thread() const noexcept;

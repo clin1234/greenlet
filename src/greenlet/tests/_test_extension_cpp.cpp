@@ -192,7 +192,7 @@ static PyMethodDef test_methods[] = {
 };
 
 
-static struct PyModuleDef moduledef = {PyModuleDef_HEAD_INIT,
+static PyModuleDef moduledef = {PyModuleDef_HEAD_INIT,
                                        "greenlet.tests._test_extension_cpp",
                                        NULL,
                                        0,
@@ -221,10 +221,6 @@ PyInit__test_extension_cpp(void)
     p_test_exception_throw_nonstd = test_exception_throw_nonstd;
     p_test_exception_throw_std = test_exception_throw_std;
     p_test_exception_switch_recurse = test_exception_switch_recurse;
-#ifdef Py_GIL_DISABLED
-    PyUnstable_Module_SetGIL(module, Py_MOD_GIL_NOT_USED);
-#endif
-
 #ifdef Py_GIL_DISABLED
     PyUnstable_Module_SetGIL(module, Py_MOD_GIL_NOT_USED);
 #endif

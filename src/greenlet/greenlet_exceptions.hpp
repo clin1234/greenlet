@@ -18,7 +18,7 @@ namespace greenlet {
     public:
 
         // CAUTION: In debug builds, may run arbitrary Python code.
-        static const PyErrOccurred
+        static PyErrOccurred
         from_current()
         {
             assert(PyErr_Occurred());

@@ -44,7 +44,7 @@ extern "C" {
 #endif
 
 
-static const _PyStackRef PyStackRef_NULL = { .bits = Py_TAG_DEFERRED};
+static _PyStackRef PyStackRef_NULL = { .bits = Py_TAG_DEFERRED};
 #define PyStackRef_IsNull(stackref) ((stackref).bits == PyStackRef_NULL.bits)
 
 static inline PyObject *

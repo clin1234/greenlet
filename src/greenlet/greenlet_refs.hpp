@@ -189,17 +189,17 @@ namespace greenlet {
         // TODO: This should probably not exist here, but be moved
         // down to relevant sub-types.
 
-        T* borrow() const noexcept
+        constexpr T* borrow() const noexcept
         {
             return this->p;
         }
 
-        PyObject* borrow_o() const noexcept
+        constexpr PyObject* borrow_o() const noexcept
         {
             return reinterpret_cast<PyObject*>(this->p);
         }
 
-         T* operator->() const noexcept
+        constexpr T* operator->() const noexcept
         {
             return this->p;
         }
@@ -209,14 +209,14 @@ namespace greenlet {
             return this->p == Py_None;
         }
 
-        PyObject* acquire_or_None() const noexcept
+        constexpr PyObject* acquire_or_None() const noexcept
         {
             PyObject* result = this->p ? reinterpret_cast<PyObject*>(this->p) : Py_None;
             Py_INCREF(result);
             return result;
         }
 
-        explicit operator bool() const noexcept
+        constexpr explicit operator bool() const noexcept
         {
             return this->p != nullptr;
         }
@@ -226,12 +226,12 @@ namespace greenlet {
             return this->p == nullptr;
         }
 
-        Py_ssize_t REFCNT() const noexcept
+        constexpr Py_ssize_t REFCNT() const noexcept
         {
             return p ? Py_REFCNT(p) : -42;
         }
 
-        PyTypeObject* TYPE() const noexcept
+        constexpr PyTypeObject* TYPE() const noexcept
         {
             return p ? Py_TYPE(p) : nullptr;
         }
@@ -278,19 +278,19 @@ namespace greenlet {
 #endif
 
     template<typename T, TypeChecker TC>
-    inline bool operator==(const PyObjectPointer<T, TC>& lhs, const PyObject* const rhs) noexcept
+    constexpr inline bool operator==(const PyObjectPointer<T, TC>& lhs, const PyObject* const rhs) noexcept
     {
         return static_cast<const void*>(lhs.borrow_o()) == static_cast<const void*>(rhs);
     }
 
     template<typename T, TypeChecker TC, typename X, TypeChecker XC>
-    inline bool operator==(const PyObjectPointer<T, TC>& lhs, const PyObjectPointer<X, XC>& rhs) noexcept
+    constexpr inline bool  operator==(const PyObjectPointer<T, TC>& lhs, const PyObjectPointer<X, XC>& rhs) noexcept
     {
         return lhs.borrow_o() == rhs.borrow_o();
     }
 
     template<typename T, TypeChecker TC, typename X, TypeChecker XC>
-    inline bool operator!=(const PyObjectPointer<T, TC>& lhs,
+    constexpr inline bool operator!=(const PyObjectPointer<T, TC>& lhs,
                            const PyObjectPointer<X, XC>& rhs) noexcept
     {
         return lhs.borrow_o() != rhs.borrow_o();
@@ -303,7 +303,7 @@ namespace greenlet {
         friend class OwnedList;
 
     protected:
-        explicit OwnedReference(T* it) : PyObjectPointer<T, TC>(it)
+        constexpr explicit OwnedReference(T* it) : PyObjectPointer<T, TC>(it)
         {
         }
 
@@ -935,7 +935,7 @@ namespace greenlet {
         {
         }
 
-        PyObject** operator&()
+        inline PyObject** operator&()
         {
             return &this->p;
         }
@@ -975,12 +975,12 @@ namespace greenlet {
             this->acquire();
         }
 
-        PyObject** operator&()
+        inline PyObject** operator&()
         {
             return &this->p;
         }
 
-        inline operator PyObject*() const
+        constexpr inline operator PyObject*() const
         {
             return this->p;
         }

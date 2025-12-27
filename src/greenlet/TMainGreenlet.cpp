@@ -71,7 +71,7 @@ MainGreenlet::thread_state(ThreadState* t) noexcept
 }
 
 
-const BorrowedMainGreenlet
+BorrowedMainGreenlet
 MainGreenlet::main_greenlet() const
 {
     return this->_self;
@@ -128,7 +128,7 @@ MainGreenlet::tp_traverse(visitproc visit, void* arg)
     return Greenlet::tp_traverse(visit, arg);
 }
 
-const OwnedObject&
+OwnedObject&
 MainGreenlet::run() const
 {
     throw AttributeError("Main greenlets do not have a run attribute.");
@@ -149,7 +149,7 @@ MainGreenlet::parent(const BorrowedObject raw_new_parent)
     throw AttributeError("cannot set the parent of a main greenlet");
 }
 
-const OwnedGreenlet
+OwnedGreenlet
 MainGreenlet::parent() const
 {
     return OwnedGreenlet(); // null becomes None

@@ -50,7 +50,7 @@ UserGreenlet::~UserGreenlet()
 }
 
 
-const BorrowedMainGreenlet
+BorrowedMainGreenlet
 UserGreenlet::main_greenlet() const
 {
     return this->_main_greenlet;
@@ -574,7 +574,7 @@ UserGreenlet::run(const BorrowedObject nrun)
     this->_run_callable = nrun;
 }
 
-const OwnedGreenlet
+OwnedGreenlet
 UserGreenlet::parent() const
 {
     return this->_parent;
